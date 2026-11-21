@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="bb-roles" content="public">
+  <title>Iniciar sesión · BunnyBlue</title>
+  <link rel="icon" href="img/logo.png" type="image/png">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+</head>
+<body data-pagina="home">
+  <header id="sitio-cabecera" class="sitio-cabecera"></header>
+
+  <main id="contenido" class="contenido">
+    <section class="tarjeta tarjeta--login" aria-labelledby="titulo-login">
+      <h1 id="titulo-login">Iniciar sesión</h1>
+      <form id="form-login" novalidate>
+        <div class="campo">
+          <label for="usuario">Usuario</label>
+          <input id="usuario" name="usuario" type="text" placeholder="Ej: jmartins" autocomplete="username" autofocus>
+        </div>
+        <div class="campo">
+          <label for="clave">Contraseña</label>
+          <input id="clave" name="clave" type="password" placeholder="Ingresa tu contraseña" autocomplete="current-password">
+        </div>
+        <p id="aviso-bloqueo" class="aviso aviso--error" role="alert" hidden>Cuenta bloqueada: solo un administrador puede restablecerla.</p>
+        <div class="acciones-login">
+          <button type="submit" id="btn-ingresar" class="btn btn--primario btn--grande">Ingresar</button>
+          <button type="button" id="btn-reiniciar" class="enlace-demo">Reiniciar bloqueos (solo demo)</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer id="sitio-pie" class="sitio-pie"></footer>
+
+  <script src="js/ui.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/login.js"></script>
+</body>
+</html>
