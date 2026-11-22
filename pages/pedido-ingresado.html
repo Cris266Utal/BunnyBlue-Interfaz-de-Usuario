@@ -1,28 +1,30 @@
 <!DOCTYPE html>
-<html lang="es-CL">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="bb-roles" content="user">
-  <title>Pedido Ingresado · BunnyBlue</title>
-  <link rel="icon" href="../img/logo.png" type="image/png">
-  <link rel="stylesheet" href="../css/styles.css">
-  <script src="../js/config.js"></script>
+  <title>Pedido Ingresado | BunnyBlue</title>
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/pedidos.css">
+  <script src="../js/data.js"></script>
   <script src="../js/auth.js"></script>
+  <script>BB.guard("user");</script>
 </head>
-<body data-pagina="pedidoIngresado">
-  <header id="sitio-cabecera" class="sitio-cabecera"></header>
-
-  <main id="contenido" class="contenido">
-    <section class="tarjeta tarjeta--vista" aria-labelledby="titulo-vista">
-      <h1 id="titulo-vista">Pedido Ingresado</h1>
-      <p class="en-construccion">Vista en construcción: se implementa en la Semana 2 (Hito 3, RIU 5).</p>
+<body data-page="pedido-ingresado.html">
+  <div id="head"></div>
+  <main>
+    <h1>Pedidos ingresados</h1>
+    <div class="barra"><button class="btn" id="editar" type="button" disabled>Editar</button><button class="btn peligro" id="eliminar" type="button" disabled>Eliminar</button></div>
+    <section class="tarjeta">
+      <div class="tabla-scroll"><table class="tabla-lista">
+        <thead><tr><th><span class="sr">Sel.</span></th><th>N.º PEDIDO</th><th>NOMBRE COMPLETO</th><th>CORREO</th><th>TELÉFONO</th><th class="num">TOTAL</th></tr></thead>
+        <tbody id="lista"></tbody>
+      </table></div>
+      <p class="pendiente" id="vacio" hidden>No hay pedidos ingresados.</p>
     </section>
   </main>
-
-  <footer id="sitio-pie" class="sitio-pie"></footer>
-
-  <script src="../js/ui.js"></script>
+  <div id="foot"></div>
   <script src="../js/layout.js"></script>
+  <script src="../js/pedido-ingresado.js"></script>
 </body>
 </html>

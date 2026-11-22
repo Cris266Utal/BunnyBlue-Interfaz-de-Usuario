@@ -1,76 +1,52 @@
-/**
- * layout.js — Plantilla común HEAD / BODY / FOOT (RIU 1).
- * Genera el encabezado, el menú del perfil y el pie de página desde un único lugar,
- * por lo que son idénticos en todas las vistas.
- */
-(function (BB) {
-  'use strict';
+/* Plantilla común HEAD / BODY / FOOT (RIU 1) y modal estándar. */
+(function () {
+  const MENUS = {
+    user:  [["Home", "home-user.html"], ["Pedidos", "pedidos.html"], ["Pedido Ingresado", "pedido-ingresado.html"]],
+    admin: [["Home", "home-admin.html"], ["Productos", "productos.html"], ["Procesamiento de Pedido", "procesamiento.html"]]
+  };
+  const inPages = location.pathname.includes("/pages/");
+  const toIndex = inPages ? "../index.html" : "index.html";
+  const toPages = inPages ? "" : "pages/";
+  const s = BB.session();
+  const active = document.body.dataset.page || "";
 
-  const { Auth, MENUS } = BB;
-  const ENLACES_PIE = ['Servicio al cliente', 'Nuestra Empresa', 'Redes Sociales'];
-
-  function menuDelPerfil(sesion) {
-    // Sin sesión solo existe «Home», que lleva al login.
-    return sesion ? MENUS[sesion.rol] : [{ id: 'home', texto: 'Home', ruta: 'login' }];
+  function menu(cls) {
+    if (!s) return "";
+    const items = MENUS[s.role].map(([label, href]) =>
+      `<a href="${toPages}${href}"${href === active ? ' class="activo" aria-current="page"' : ""}>${label}</a>`).join("");
+    return `<nav class="${cls}" aria-label="Menú ${s.role}">${items}</nav>`;
   }
 
-  function itemsMenu(items, paginaActiva) {
-    return items
-      .map((item) => {
-        const actual = item.id === paginaActiva ? ' aria-current="page"' : '';
-        return `<li><a href="${Auth.url(item.ruta)}"${actual}>${item.texto}</a></li>`;
-      })
-      .join('');
-  }
+  document.getElementById("head").outerHTML =
+    `<header class="head"><div class="head-fila">
+       <a class="marca" href="${s ? toPages + BB.home(s.role) : toIndex}"><span class="logo" aria-hidden="true">BB</span>BunnyBlue</a>
+       ${s ? '<button class="btn-salir" id="btn-salir" type="button">Cerrar sesión</button>' : ""}
+     </div>${menu("menu")}</header>`;
+  document.getElementById("foot").outerHTML =
+    `<footer class="foot">${menu("menu-foot")}
+       <div class="foot-fila"><span>© 2026 BunnyBlue. Todos los derechos reservados.</span>
+       <span class="foot-links"><a href="#">Términos</a><a href="#">Privacidad</a><a href="#">Ayuda</a></span></div></footer>`;
+  const out = document.getElementById("btn-salir");
+  if (out) out.addEventListener("click", BB.logout);
 
-  function plantillaCabecera(sesion, items, paginaActiva) {
-    const boton = sesion
-      ? '<button type="button" class="btn btn--contorno" data-accion="cerrar-sesion">Cerrar sesión</button>'
-      : '';
-    return `
-      <div class="cabecera__fila">
-        <a class="marca" href="${Auth.url(sesion ? 'home' : 'login')}">
-          <img class="marca__logo" src="${BB.raiz}img/logo.png" alt="" width="48" height="48">
-          <span class="marca__nombre">BunnyBlue</span>
-        </a>
-        ${boton}
-      </div>
-      <nav class="menu" aria-label="Menú principal">
-        <ul class="menu__lista">${itemsMenu(items, paginaActiva)}</ul>
-      </nav>`;
-  }
-
-  function plantillaPie(items, paginaActiva) {
-    const enlaces = ENLACES_PIE.map((texto) => `<li><a href="#" data-pendiente>${texto}</a></li>`).join('');
-    return `
-      <nav class="menu-pie" aria-label="Menú del pie de página">
-        <ul class="menu-pie__lista">${itemsMenu(items, paginaActiva)}</ul>
-      </nav>
-      <div class="pie__inferior">
-        <p class="pie__copyright">© 2026 BunnyBlue</p>
-        <ul class="pie__enlaces">${enlaces}</ul>
-      </div>`;
-  }
-
-  function renderizar() {
-    const sesion = Auth.obtenerSesion();
-    const items = menuDelPerfil(sesion);
-    const paginaActiva = document.body.dataset.pagina;
-
-    const cabecera = document.getElementById('sitio-cabecera');
-    const pie = document.getElementById('sitio-pie');
-    if (cabecera) cabecera.innerHTML = plantillaCabecera(sesion, items, paginaActiva);
-    if (pie) pie.innerHTML = plantillaPie(items, paginaActiva);
-  }
-
-  document.addEventListener('click', (evento) => {
-    if (evento.target.closest('[data-accion="cerrar-sesion"]')) {
-      Auth.cerrarSesion();
-      location.href = Auth.url('login');
-    }
-    // Los enlaces del pie aún no tienen destino: no deben saltar al inicio de la página.
-    if (evento.target.closest('[data-pendiente]')) evento.preventDefault();
-  });
-
-  renderizar();
-})(window.BB);
+  /* Modal estándar: BB.modal({ title, text, tone: "red|green|orange|blue", buttons: [{label, kind, onClick}], onClose }) */
+  BB.modal = function ({ title, text, tone = "blue", buttons, onClose }) {
+    const ov = document.createElement("div");
+    ov.className = "overlay";
+    ov.innerHTML = `<div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="m-t" aria-describedby="m-d">
+      <div class="m-icono ${tone}" aria-hidden="true">${{ red: "✕", green: "✓", orange: "!", blue: "i" }[tone]}</div>
+      <h2 id="m-t"></h2><p id="m-d"></p><div class="m-btns"></div></div>`;
+    ov.querySelector("h2").textContent = title;
+    ov.querySelector("p").textContent = text;
+    const close = fn => () => { ov.remove(); if (fn) fn(); };
+    (buttons || [{ label: "Aceptar", onClick: onClose }]).forEach(b => {
+      const el = document.createElement("button");
+      el.type = "button"; el.className = "btn " + (b.kind || ""); el.textContent = b.label;
+      el.addEventListener("click", close(b.onClick));
+      ov.querySelector(".m-btns").appendChild(el);
+    });
+    ov.addEventListener("keydown", e => { if (e.key === "Escape") ov.remove(); });
+    document.body.appendChild(ov);
+    ov.querySelector("button").focus();
+  };
+})();

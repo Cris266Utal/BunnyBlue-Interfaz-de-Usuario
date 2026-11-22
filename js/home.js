@@ -1,40 +1,18 @@
-/**
- * home.js — Dashboard de bienvenida (RIU 3): saludo, perfil y tarjetas según el rol.
- * También informa cuando se intentó abrir una sección de otro perfil (RIU 10).
- */
-(function (BB) {
-  'use strict';
-
-  const { Auth, UI, MENUS, CLAVES } = BB;
-  const sesion = Auth.obtenerSesion();
-  if (!sesion) return; // el guardián de auth.js ya está redirigiendo al login
-
-  document.getElementById('saludo').textContent = `Bienvenido/a, ${sesion.nombre}`;
-  document.getElementById('perfil-nombre').textContent = sesion.rol;
-
-  const contenedor = document.getElementById('tarjetas-acceso');
-  MENUS[sesion.rol]
-    .filter((item) => item.id !== 'home')
-    .forEach((item) => {
-      const enlace = document.createElement('a');
-      enlace.className = 'tarjeta-acceso';
-      enlace.href = Auth.url(item.ruta);
-      enlace.textContent = item.texto;
-      contenedor.append(enlace);
-    });
-
-  let hayAviso = false;
-  try {
-    hayAviso = sessionStorage.getItem(CLAVES.AVISO_DENEGADO) === '1';
-    sessionStorage.removeItem(CLAVES.AVISO_DENEGADO);
-  } catch (error) {
-    /* se ignora */
-  }
-  if (hayAviso) {
-    UI.modal({
-      tipo: 'error',
-      titulo: 'Acceso denegado',
-      mensaje: `El perfil ${sesion.rol} no tiene permiso para abrir esa sección. Permaneces en tu vista.`
-    });
-  }
-})(window.BB);
+/* Home de bienvenida (RIU 3): nombre, perfil y tarjetas de acceso según el perfil. */
+(function () {
+  const s = BB.session();
+  document.getElementById("saludo").textContent = "Bienvenido/a, " + s.name;
+  document.getElementById("perfil").textContent = "Perfil: " + s.role;
+  const pend = BBData.pendientes().length;
+  const CARDS = {
+    user: [["Pedidos", "Registra un pedido nuevo con los datos del cliente y su detalle.", "pedidos.html", "Nuevo pedido"],
+           ["Pedido Ingresado", "Revisa, edita o elimina los pedidos ya enviados.", "pedido-ingresado.html", pend + " pedidos ingresados"]],
+    admin: [["Productos", "Administra el catálogo: ingresa, edita y elimina productos.", "productos.html", BBData.products().length + " productos"],
+            ["Procesamiento de Pedido", "Da el visto bueno y envía los pedidos a su destino.", "procesamiento.html", pend + " pedidos pendientes"]]
+  };
+  CARDS[s.role].forEach(([t, d, href, meta]) => {
+    const a = document.createElement("a"); a.className = "card-link"; a.href = href;
+    [["h2", t], ["p", d], ["span", meta]].forEach(([tag, txt]) => { const e = document.createElement(tag); e.textContent = txt; a.appendChild(e); });
+    document.getElementById("cards").appendChild(a);
+  });
+})();

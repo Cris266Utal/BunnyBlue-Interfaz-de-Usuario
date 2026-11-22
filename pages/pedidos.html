@@ -1,28 +1,41 @@
 <!DOCTYPE html>
-<html lang="es-CL">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="bb-roles" content="user">
-  <title>Pedidos · BunnyBlue</title>
-  <link rel="icon" href="../img/logo.png" type="image/png">
-  <link rel="stylesheet" href="../css/styles.css">
-  <script src="../js/config.js"></script>
+  <title>Pedidos | BunnyBlue</title>
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/pedidos.css">
+  <script src="../js/data.js"></script>
   <script src="../js/auth.js"></script>
+  <script>BB.guard("user");</script>
 </head>
-<body data-pagina="pedidos">
-  <header id="sitio-cabecera" class="sitio-cabecera"></header>
-
-  <main id="contenido" class="contenido">
-    <section class="tarjeta tarjeta--vista" aria-labelledby="titulo-vista">
-      <h1 id="titulo-vista">Pedidos</h1>
-      <p class="en-construccion">Vista en construcción: se implementa en la Semana 2 (Hito 3, RIU 4).</p>
-    </section>
+<body data-page="pedidos.html">
+  <div id="head"></div>
+  <main>
+    <h1 id="titulo">Pedidos</h1>
+    <div class="dos-col">
+      <section class="tarjeta" id="card-datos" aria-labelledby="t-datos">
+        <div class="card-head"><h2 id="t-datos">Datos del cliente</h2><span class="badge" id="badge" hidden>DATOS COMPLETOS</span></div>
+      <div class="campo"><label for="nombre">NOMBRE COMPLETO</label><input id="nombre" type="text" placeholder="Ej.: Pedro Núñez Soto" autocomplete="off"><p class="nota" id="n-nombre" aria-live="polite"></p></div>      <div class="campo"><label for="run">RUN</label><input id="run" type="text" placeholder="Ej.: 12.345.678-5" autocomplete="off"><p class="nota" id="n-run" aria-live="polite"></p></div>      <div class="campo"><label for="telefono">TELÉFONO</label><input id="telefono" type="text" placeholder="Ej.: +56912345678" autocomplete="off"><p class="nota" id="n-telefono" aria-live="polite"></p></div>      <div class="campo"><label for="correo">CORREO</label><input id="correo" type="text" placeholder="Ej.: nombre@correo.cl" autocomplete="off"><p class="nota" id="n-correo" aria-live="polite"></p></div>      <div class="campo"><label for="direccion">DIRECCIÓN</label><input id="direccion" type="text" placeholder="Ej.: Calle 2 Norte 830, Talca" autocomplete="off"><p class="nota" id="n-direccion" aria-live="polite"></p></div>
+        <div class="acciones" id="acciones"></div>
+      </section>
+      <section class="tarjeta" aria-labelledby="t-det">
+        <h2 id="t-det">Detalle del pedido</h2>
+        <div class="tabla-scroll"><table>
+          <thead><tr><th>CANTIDAD</th><th>PRODUCTO</th><th>VALOR UNITARIO</th><th>VALOR VENTA</th></tr></thead>
+          <tbody id="filas"></tbody>
+        </table></div>
+        <div class="acciones" style="margin-top:12px"><button class="btn sec" id="add" type="button">Agregar fila</button><button class="btn sec" id="del" type="button">Eliminar fila</button></div>
+        <p class="total">Total: <strong id="total">$0</strong></p>
+        <ul class="avisos" id="avisos" aria-live="polite" hidden></ul>
+        <p class="reglas">Reglas del detalle: cantidad máxima de 100 por producto; siempre queda una fila en blanco; los productos ya ingresados no se eliminan con «Eliminar fila»; con más de 10 productos la tabla se desplaza. El valor unitario y el valor venta se calculan solos.</p>
+      </section>
+    </div>
   </main>
-
-  <footer id="sitio-pie" class="sitio-pie"></footer>
-
-  <script src="../js/ui.js"></script>
+  <div id="foot"></div>
   <script src="../js/layout.js"></script>
+  <script src="../js/validar.js"></script>
+  <script src="../js/pedidos.js"></script>
 </body>
 </html>

@@ -1,28 +1,47 @@
 <!DOCTYPE html>
-<html lang="es-CL">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="bb-roles" content="admin">
-  <title>Productos · BunnyBlue</title>
-  <link rel="icon" href="../img/logo.png" type="image/png">
-  <link rel="stylesheet" href="../css/styles.css">
-  <script src="../js/config.js"></script>
+  <title>Productos | BunnyBlue</title>
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/pedidos.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <script src="../js/data.js"></script>
   <script src="../js/auth.js"></script>
+  <script>BB.guard("admin");</script>
 </head>
-<body data-pagina="productos">
-  <header id="sitio-cabecera" class="sitio-cabecera"></header>
-
-  <main id="contenido" class="contenido">
-    <section class="tarjeta tarjeta--vista" aria-labelledby="titulo-vista">
-      <h1 id="titulo-vista">Productos</h1>
-      <p class="en-construccion">Vista en construcción: se implementa en la Semana 2 (Hito 4, RIU 6, 6.1, 6.2 y 6.3).</p>
+<body data-page="productos.html">
+  <div id="head"></div>
+  <main>
+    <section id="vista-lista">
+      <h1>Productos</h1>
+      <section class="tarjeta">
+        <div class="tabla-scroll"><table class="tabla-lista">
+          <thead><tr><th><span class="sr">Sel.</span></th><th>PRODUCTO_NÚMERO</th><th>NOMBRE</th><th class="num">CANTIDAD</th><th class="num">VALOR</th><th>ESTADO</th></tr></thead>
+          <tbody id="lista"></tbody>
+        </table></div>
+      </section>
+      <div class="barra centro">
+        <button class="btn" id="ingresar" type="button">Ingresar</button>
+        <button class="btn" id="editar" type="button" disabled>Editar</button>
+        <button class="btn peligro" id="eliminar" type="button" disabled>Eliminar</button>
+      </div>
+    </section>
+    <section id="vista-form" hidden>
+      <div class="tarjeta form-card">
+        <h1 id="f-titulo">Ingresar Producto</h1>
+        <div class="campo"><label for="codigo">PRODUCTO NÚMERO</label><input id="codigo" type="text" placeholder="Ej: P-104" autocomplete="off"><p class="nota" id="n-codigo"></p></div>
+        <div class="campo"><label for="nombre">NOMBRE</label><input id="nombre" type="text" placeholder="Ej: Harina 1kg" autocomplete="off"><p class="nota" id="n-nombre"></p></div>
+        <div class="campo"><label for="cantidad">CANTIDAD</label><input id="cantidad" type="text" inputmode="numeric" placeholder="Ej: 15" autocomplete="off"><p class="nota" id="n-cantidad"></p></div>
+        <div class="campo"><label for="valor">VALOR</label><input id="valor" type="text" inputmode="numeric" placeholder="Ej: $2.500" autocomplete="off"><p class="nota" id="n-valor"></p><p class="ley" id="ley-valor"></p></div>
+        <div class="campo"><label for="estado">ESTADO</label><select id="estado"><option>Habilitado</option><option>Deshabilitado</option></select><p class="ley">Con cantidad 0 el producto queda Deshabilitado automáticamente.</p></div>
+        <div class="acciones"><button class="btn" id="guardar" type="button">Guardar</button><button class="btn sec" id="volver" type="button">Volver</button><button class="btn peligro" id="borrar" type="button">Borrar</button></div>
+      </div>
     </section>
   </main>
-
-  <footer id="sitio-pie" class="sitio-pie"></footer>
-
-  <script src="../js/ui.js"></script>
+  <div id="foot"></div>
   <script src="../js/layout.js"></script>
+  <script src="../js/productos.js"></script>
 </body>
 </html>
