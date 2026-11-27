@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Procesamiento de Pedido | BunnyBlue</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/pedidos.css">
   <link rel="stylesheet" href="../css/admin.css">
@@ -13,36 +14,44 @@
 </head>
 <body data-page="procesamiento.html">
   <div id="head"></div>
-  <main>
-    <h1>Procesamiento de Pedido</h1>
-    <p class="paso" id="paso" aria-live="polite"></p>
-    <section id="paso1">
-      <div class="pcards" id="tarjetas"></div>
-      <p class="pendiente" id="vacio" hidden>No hay pedidos pendientes de procesar.</p>
-      <div class="barra centro"><button class="btn" id="procesar" type="button" disabled>Procesar</button></div>
+  <main class="m-proc">
+    <section id="paso1" aria-labelledby="t-p1">
+      <h1 class="paso-t" id="t-p1">PASO 1: Listado</h1>
+      <div id="lista"></div>
+      <p class="vacio-msg" id="vacio" hidden>No hay pedidos pendientes. Aquí aparecen solo los pedidos ingresados en la vista Pedidos.</p>
+      <div class="bloque-centro"><button class="btn" id="procesar" type="button" disabled>Procesar</button></div>
     </section>
-    <section id="paso2" hidden>
-      <div class="dos-col">
+    <section id="paso2" aria-labelledby="t-p2" hidden>
+      <h1 class="paso-t" id="t-p2">PASO 2: Visto Bueno</h1>
+      <p class="paso-s">Datos del pedido (solo lectura)</p>
+      <div class="p2">
         <section class="tarjeta" aria-labelledby="t-cli">
           <h2 id="t-cli">Datos del cliente</h2>
-          <dl class="datos" id="datos"></dl>
+          <div class="campo"><label for="d-nombre">Nombre completo</label><input id="d-nombre" type="text" readonly></div>
+          <div class="campo"><label for="d-run">RUN</label><input id="d-run" type="text" readonly></div>
+          <div class="campo"><label for="d-telefono">Teléfono</label><input id="d-telefono" type="text" readonly></div>
+          <div class="campo"><label for="d-correo">Correo</label><input id="d-correo" type="text" readonly></div>
+          <div class="campo"><label for="d-direccion">Dirección</label><input id="d-direccion" type="text" readonly></div>
         </section>
-        <section class="tarjeta" aria-labelledby="t-det">
-          <h2 id="t-det">Detalle del pedido</h2>
-          <div class="tabla-scroll"><table>
-            <thead><tr><th>CANTIDAD</th><th>PRODUCTO</th><th>VALOR UNITARIO</th><th>VALOR VENTA</th></tr></thead>
-            <tbody id="det"></tbody>
-          </table></div>
-          <p class="total">Total: <strong id="total"></strong></p>
-        </section>
-      </div>
-      <section class="tarjeta" style="margin-top:24px">
-        <div class="decision">
-          <div class="campo"><label for="vb">VISTO BUENO</label><select id="vb"><option value="">Seleccionar…</option><option>Sí</option><option>No</option></select></div>
-          <div class="campo"><label for="dest">ENVIAR A</label><select id="dest" disabled><option value="">Primero elige el visto bueno</option></select></div>
+        <div>
+          <section class="tarjeta" aria-labelledby="t-det">
+            <h2 id="t-det">Detalle del pedido</h2>
+            <div class="tabla-scroll"><table>
+              <thead><tr><th>Cantidad</th><th>Producto</th><th>Valor unitario</th><th>Valor venta</th></tr></thead>
+              <tbody id="det"></tbody>
+            </table></div>
+            <p class="p2-total" id="total">Total: $ 0</p>
+          </section>
+          <div class="decision">
+            <div class="fila"><div class="campo"><label for="vb">Visto bueno</label>
+              <div class="sel"><select id="vb" class="vacio"><option value="Sí">Sí</option><option value="No">No</option><option value="Pendiente">Pendiente</option></select><span class="ph" aria-hidden="true">Selecciona (Sí / No / Pendiente)</span></div></div></div>
+            <div class="fila"><div class="campo dis" id="campo-dest"><label for="dest">Enviar a</label>
+              <div class="sel"><select id="dest" class="vacio" disabled><option value="Producción">Producción</option><option value="Bodega">Bodega</option></select><span class="ph" aria-hidden="true">Selecciona (Producción / Bodega)</span></div></div>
+              <p class="nota-lat">ENVIAR A se habilita al elegir una opción de VISTO BUENO.</p></div>
+          </div>
+          <div class="p2-acc"><button class="btn sec" id="volver" type="button">Volver</button><button class="btn" id="aceptar" type="button" disabled>Aceptar</button></div>
         </div>
-        <div class="acciones centro"><button class="btn sec" id="volver" type="button">Volver</button><button class="btn" id="aceptar" type="button" disabled>Aceptar</button></div>
-      </section>
+      </div>
     </section>
   </main>
   <div id="foot"></div>

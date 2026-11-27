@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pedido Ingresado | BunnyBlue</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/pedidos.css">
   <script src="../js/data.js"></script>
@@ -12,16 +13,14 @@
 </head>
 <body data-page="pedido-ingresado.html">
   <div id="head"></div>
-  <main>
+  <main class="m-lista">
     <h1>Pedidos ingresados</h1>
-    <div class="barra"><button class="btn" id="editar" type="button" disabled>Editar</button><button class="btn peligro" id="eliminar" type="button" disabled>Eliminar</button></div>
-    <section class="tarjeta">
-      <div class="tabla-scroll"><table class="tabla-lista">
-        <thead><tr><th><span class="sr">Sel.</span></th><th>N.º PEDIDO</th><th>NOMBRE COMPLETO</th><th>CORREO</th><th>TELÉFONO</th><th class="num">TOTAL</th></tr></thead>
-        <tbody id="lista"></tbody>
-      </table></div>
-      <p class="pendiente" id="vacio" hidden>No hay pedidos ingresados.</p>
-    </section>
+    <div class="tabla-scroll"><table class="tabla-lista">
+      <thead><tr><th><span class="sr">Seleccionar</span></th><th>N° pedido</th><th>Nombre completo</th><th>Correo</th><th>Teléfono</th><th>Total</th></tr></thead>
+      <tbody id="lista"></tbody>
+    </table></div>
+    <p class="vacio-msg" id="vacio" hidden>Aún no hay pedidos ingresados. Crea uno en la vista Pedidos.</p>
+    <div class="barra-centro"><button class="btn contorno" id="editar" type="button" disabled>Editar</button><button class="btn peligro" id="eliminar" type="button" disabled>Eliminar</button></div>
   </main>
   <div id="foot"></div>
   <script src="../js/layout.js"></script>

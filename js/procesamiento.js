@@ -1,61 +1,67 @@
-/* Procesamiento de Pedido en 2 pasos (RIU 7): selección única -> visto bueno y destino -> confirmación. */
+/* Procesamiento de Pedido en 2 pasos (RIU 7). Opciones según el requerimiento y las Figuras 75 a 79:
+   VISTO BUENO = Sí / No / Pendiente; ENVIAR A = Producción / Bodega (se habilita al elegir el visto bueno). */
 (function () {
   const $ = id => document.getElementById(id);
-  const DEST = { "Sí": ["Producción", "Bodega", "Despacho"], "No": ["Revisión"] };
   let sel = null;
 
-  function paso(n) {
-    $("paso1").hidden = n !== 1; $("paso2").hidden = n !== 2;
-    $("paso").textContent = n === 1 ? "Paso 1 de 2: selecciona el pedido a procesar." : "Paso 2 de 2: da el visto bueno y elige el destino.";
-  }
-  function renderCards() {
-    const box = $("tarjetas"), list = BBData.pendientes(); box.textContent = "";
+  const paso = n => { $("paso1").hidden = n !== 1; $("paso2").hidden = n !== 2; };
+
+  function renderLista() {
+    const box = $("lista"), list = BBData.pendientes(); box.textContent = "";
     if (!list.some(o => o.id === sel)) sel = null;
     $("vacio").hidden = list.length > 0;
     list.forEach(o => {
-      const card = document.createElement("label"); card.className = "pcard" + (o.id === sel ? " sel" : "");
-      const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = o.id === sel; cb.setAttribute("aria-label", "Seleccionar pedido #" + o.id);
-      const n = o.items.reduce((s, i) => s + i.qty, 0);
-      [["h2", "Pedido #" + o.id], ["p", o.cliente.nombre], ["p", n + " unidades · " + o.items.length + " productos"], ["p", BBData.clp(BBData.total(o))]].forEach(([t, x], i) => {
-        const e = document.createElement(t); e.textContent = x; if (i === 3) e.className = "tot"; card.appendChild(e);
-      });
-      const ok = document.createElement("span"); ok.className = "ok"; ok.textContent = "✓ Seleccionado"; card.append(cb, ok);
-      cb.addEventListener("change", () => { sel = sel === o.id ? null : o.id; renderCards(); const c = box.querySelector("input:checked"); if (c) c.focus(); });
-      box.appendChild(card);
+      const row = document.createElement("label"); row.className = "pfila" + (o.id === sel ? " sel" : "");
+      const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = o.id === sel;
+      cb.setAttribute("aria-label", "Seleccionar pedido #" + o.id);
+      const txt = document.createElement("div");
+      const h = document.createElement("h2"); h.textContent = "Pedido #" + o.id;
+      const p = document.createElement("p"); p.textContent = `Cliente: ${o.cliente.nombre} · Total: ${BBData.clp(BBData.total(o))}`;
+      txt.append(h, p); row.append(cb, txt);
+      cb.addEventListener("change", () => { sel = sel === o.id ? null : o.id; renderLista(); const c = box.querySelector("input:checked"); if (c) c.focus(); });
+      box.appendChild(row);
     });
     $("procesar").disabled = sel === null;
   }
+
   $("procesar").addEventListener("click", () => {
-    const o = BBData.pendientes().find(x => x.id === sel); if (!o) { renderCards(); return; }
-    const dl = $("datos"); dl.textContent = "";
-    [["Pedido", "#" + o.id], ["Nombre", o.cliente.nombre], ["RUN", o.cliente.run], ["Teléfono", o.cliente.telefono], ["Correo", o.cliente.correo], ["Dirección", o.cliente.direccion]].forEach(([k, v]) => {
-      const dt = document.createElement("dt"), dd = document.createElement("dd"); dt.textContent = k; dd.textContent = v; dl.append(dt, dd);
-    });
+    const o = BBData.pendientes().find(x => x.id === sel); if (!o) { renderLista(); return; }
+    const c = o.cliente;
+    $("d-nombre").value = c.nombre; $("d-run").value = c.run; $("d-telefono").value = BBData.tel(c.telefono);
+    $("d-correo").value = c.correo; $("d-direccion").value = c.direccion;
     const tb = $("det"); tb.textContent = "";
     o.items.forEach(i => {
       const tr = document.createElement("tr");
-      [i.qty, i.name, BBData.clp(i.price), BBData.clp(i.price * i.qty)].forEach(v => { const td = document.createElement("td"); td.textContent = v; tr.appendChild(td); });
+      [i.qty, i.name, BBData.clp(i.price), BBData.clp(i.price * i.qty)].forEach((v, k) => {
+        const td = document.createElement("td"); td.textContent = v; if (k > 1) td.className = "ro"; tr.appendChild(td);
+      });
       tb.appendChild(tr);
     });
-    $("total").textContent = BBData.clp(BBData.total(o));
-    $("vb").value = ""; fillDest(""); paso(2); $("vb").focus();
+    $("total").textContent = "Total: " + BBData.clpTotal(BBData.total(o));
+    resetSelectores(); paso(2); $("vb").focus();
   });
-  function fillDest(vb) {
-    const d = $("dest"); d.textContent = "";
-    const first = document.createElement("option"); first.value = ""; first.textContent = vb ? "Seleccionar…" : "Primero elige el visto bueno"; d.appendChild(first);
-    (DEST[vb] || []).forEach(t => { const o = document.createElement("option"); o.textContent = t; d.appendChild(o); });
-    d.disabled = !vb; check();
+
+  function resetSelectores() {
+    $("vb").selectedIndex = -1; $("vb").classList.add("vacio");
+    $("dest").selectedIndex = -1; $("dest").classList.add("vacio"); $("dest").disabled = true;
+    $("campo-dest").classList.add("dis"); check();
   }
-  const check = () => { $("aceptar").disabled = !($("vb").value && $("dest").value); };
-  $("vb").addEventListener("change", () => fillDest($("vb").value));
-  $("dest").addEventListener("change", check);
-  $("volver").addEventListener("click", () => { paso(1); renderCards(); });
+  /* «Aceptar» solo se habilita con ambos selectores completos. */
+  function check() { $("aceptar").disabled = !($("vb").value && $("dest").value); }
+
+  $("vb").addEventListener("change", () => {
+    $("vb").classList.toggle("vacio", !$("vb").value);
+    $("dest").disabled = !$("vb").value; $("campo-dest").classList.toggle("dis", !$("vb").value);
+    check();
+  });
+  $("dest").addEventListener("change", () => { $("dest").classList.toggle("vacio", !$("dest").value); check(); });
+  $("volver").addEventListener("click", () => { paso(1); renderLista(); });
   $("aceptar").addEventListener("click", () => {
     const orders = BBData.orders(), o = orders.find(x => x.id === sel); if (!o) return;
     const vb = $("vb").value, dest = $("dest").value;
     Object.assign(o, { estado: "Procesado", vistoBueno: vb, destino: dest, procesadoPor: BB.session().username, fecha: new Date().toISOString() });
     BBData.saveOrders(orders);
-    BB.modal({ title: `Pedido #${o.id} procesado`, text: `Visto bueno: ${vb}. Enviado a: ${dest}.`, tone: "green", onClose: () => { sel = null; paso(1); renderCards(); } });
+    BB.modal({ title: "Pedido procesado", text: `Pedido #${o.id} procesado correctamente.\nVisto bueno: ${vb} · Enviado a: ${dest}`, tone: "green", onClose: () => { sel = null; paso(1); renderLista(); } });
   });
-  paso(1); renderCards();
+  paso(1); renderLista();
 })();

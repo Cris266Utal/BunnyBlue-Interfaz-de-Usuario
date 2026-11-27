@@ -20,11 +20,10 @@
       const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = p.id === sel; cb.dataset.id = p.id;
       cb.setAttribute("aria-label", "Seleccionar " + p.name);
       const est = document.createElement("span"); est.className = "est " + (p.estado === "Habilitado" ? "on" : "off");
-      est.textContent = (p.estado === "Habilitado" ? "✓ " : "⊘ ") + p.estado;
+      est.textContent = (p.estado === "Habilitado" ? "● " : "○ ") + p.estado;
       [cb, p.id, p.name, String(p.stock), BBData.clp(p.price), est].forEach((c, i) => {
         const td = document.createElement("td");
         if (typeof c === "string") td.textContent = c; else td.appendChild(c);
-        if (i === 3 || i === 4) td.className = "num";
         tr.appendChild(td);
       });
       const toggle = fromCb => { sel = sel === p.id ? null : p.id; render(fromCb ? p.id : null); };
@@ -61,18 +60,22 @@
     $("estado").value = p ? p.estado : "Habilitado";
     const uso = p && BBData.enUso(p.id), off = p && p.estado === "Deshabilitado";
     $("codigo").readOnly = !!p; $("valor").readOnly = !!(uso || off);
-    $("ley-valor").textContent = uso ? "Valor bloqueado: el producto está incluido en pedidos existentes." : off ? "Valor bloqueado: el producto está deshabilitado." : "";
+    $("ley-codigo").textContent = p ? "(no editable)" : "";
+    $("ley-valor").textContent = uso ? "(no editable: producto en pedidos)" : off ? "(no editable: producto deshabilitado)" : "";
+    pintaEstado(); $("principal").classList.add("en-form");
     $("vista-lista").hidden = true; $("vista-form").hidden = false;
     snap = values(); (p ? $("nombre") : $("codigo")).focus();
   }
-  function cerrar() { $("vista-form").hidden = true; $("vista-lista").hidden = false; render(); }
+  const pintaEstado = () => { $("estado").dataset.v = $("estado").value; };
+  $("estado").addEventListener("change", pintaEstado);
+  function cerrar() { $("principal").classList.remove("en-form"); $("vista-form").hidden = true; $("vista-lista").hidden = false; render(); }
   $("volver").addEventListener("click", () => {
     if (values() === snap) { cerrar(); return; }
-    BB.modal({ title: "¿Volver sin guardar?", text: "Los cambios que hiciste no se guardarán.", tone: "orange",
-      buttons: [{ label: "Seguir editando", kind: "sec" }, { label: "Volver", kind: "peligro", onClick: cerrar }] });
+    BB.modal({ title: "¿Volver sin guardar?", text: "Los cambios que hiciste en este producto no se guardarán.", tone: "orange",
+      buttons: [{ label: "Seguir editando", kind: "sec" }, { label: "Volver", onClick: cerrar }] });
   });
   $("borrar").addEventListener("click", () => {
-    BB.modal({ title: "¿Borrar los campos?", text: "Se vaciarán los datos escritos en el formulario. No se elimina ningún producto del listado.", tone: "orange",
+    BB.modal({ title: "¿Borrar los campos?", text: "Se vaciarán todos los datos escritos en el formulario.", tone: "orange",
       buttons: [{ label: "Cancelar", kind: "sec" }, { label: "Borrar", kind: "peligro", onClick: () => {
         FIELDS.forEach(f => { if (!$(f.id).readOnly) $(f.id).value = ""; }); clearErrors();
       } }] });
@@ -82,12 +85,12 @@
     FIELDS.forEach(f => {
       const s = st(f), bad = s !== "ok";
       $(f.id).parentElement.classList.toggle("error", bad); $(f.id).setAttribute("aria-invalid", bad);
-      $("n-" + f.id).textContent = bad ? (s === "empty" ? "Campo obligatorio" : f.hint) : "";
+      $("n-" + f.id).textContent = bad ? "! " + (s === "empty" ? "Campo obligatorio" : f.hint) : "";
     });
     const vac = FIELDS.filter(f => st(f) === "empty"), mal = FIELDS.filter(f => st(f) === "bad");
     if (vac.length || mal.length) {
       BB.modal({ title: vac.length ? "Faltan campos por completar" : "Hay datos con formato incorrecto", tone: "red",
-        text: (vac.length ? "Completa: " : "Corrige: ") + lista((vac.length ? vac : mal).map(f => f.label)) + "." });
+        text: vac.length ? "Completa los siguientes campos obligatorios:" : "Corrige los siguientes campos:", list: (vac.length ? vac : mal).map(f => f.label) });
       return;
     }
     const list = BBData.products(), id = val(FIELDS[0]), stock = Number(val(FIELDS[2]));

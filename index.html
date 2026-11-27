@@ -3,22 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Iniciar sesión | BunnyBlue</title>
+  <title>Home | BunnyBlue</title>
+  <link rel="icon" href="assets/logo.png" type="image/png">
   <link rel="stylesheet" href="css/base.css">
 </head>
 <body data-page="index.html">
   <div id="head"></div>
-  <main>
-    <section class="tarjeta login">
-      <h1>Iniciar sesión</h1>
+  <main class="m-login">
+    <section class="tarjeta login" aria-labelledby="t-login">
+      <h1 id="t-login">Iniciar sesión</h1>
       <form id="form-login" novalidate>
-        <label for="usuario">USUARIO</label>
-        <input id="usuario" type="text" autocomplete="username" placeholder="Ej.: camila" required>
-        <label for="clave">CONTRASEÑA</label>
-        <input id="clave" type="password" autocomplete="current-password" placeholder="Tu contraseña" required>
-        <button id="btn-ingresar" class="btn" type="submit">Ingresar</button>
+        <div class="campo"><label for="usuario">Usuario</label><input id="usuario" type="text" autocomplete="username" placeholder="Ej: jmartins" required></div>
+        <div class="campo"><label for="clave">Contraseña</label><input id="clave" type="password" autocomplete="current-password" placeholder="Ingresa tu contraseña" required></div>
       </form>
     </section>
+    <div class="login-acc"><button id="btn-ingresar" class="btn grande" type="submit" form="form-login">Ingresar</button></div>
   </main>
   <div id="foot"></div>
   <script src="js/data.js"></script>

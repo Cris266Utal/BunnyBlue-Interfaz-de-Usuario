@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Productos | BunnyBlue</title>
+  <link rel="icon" href="../assets/logo.png" type="image/png">
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/pedidos.css">
   <link rel="stylesheet" href="../css/admin.css">
@@ -13,29 +14,27 @@
 </head>
 <body data-page="productos.html">
   <div id="head"></div>
-  <main>
+  <main class="m-lista" id="principal">
     <section id="vista-lista">
       <h1>Productos</h1>
-      <section class="tarjeta">
-        <div class="tabla-scroll"><table class="tabla-lista">
-          <thead><tr><th><span class="sr">Sel.</span></th><th>PRODUCTO_NÚMERO</th><th>NOMBRE</th><th class="num">CANTIDAD</th><th class="num">VALOR</th><th>ESTADO</th></tr></thead>
-          <tbody id="lista"></tbody>
-        </table></div>
-      </section>
-      <div class="barra centro">
+      <div class="tabla-scroll"><table class="tabla-lista">
+        <thead><tr><th><span class="sr">Seleccionar</span></th><th>PRODUCTO_NÚMERO</th><th>Nombre</th><th>Cantidad</th><th>Valor</th><th>Estado</th></tr></thead>
+        <tbody id="lista"></tbody>
+      </table></div>
+      <div class="barra-centro tres">
         <button class="btn" id="ingresar" type="button">Ingresar</button>
-        <button class="btn" id="editar" type="button" disabled>Editar</button>
+        <button class="btn contorno" id="editar" type="button" disabled>Editar</button>
         <button class="btn peligro" id="eliminar" type="button" disabled>Eliminar</button>
       </div>
     </section>
     <section id="vista-form" hidden>
       <div class="tarjeta form-card">
         <h1 id="f-titulo">Ingresar Producto</h1>
-        <div class="campo"><label for="codigo">PRODUCTO NÚMERO</label><input id="codigo" type="text" placeholder="Ej: P-104" autocomplete="off"><p class="nota" id="n-codigo"></p></div>
-        <div class="campo"><label for="nombre">NOMBRE</label><input id="nombre" type="text" placeholder="Ej: Harina 1kg" autocomplete="off"><p class="nota" id="n-nombre"></p></div>
-        <div class="campo"><label for="cantidad">CANTIDAD</label><input id="cantidad" type="text" inputmode="numeric" placeholder="Ej: 15" autocomplete="off"><p class="nota" id="n-cantidad"></p></div>
-        <div class="campo"><label for="valor">VALOR</label><input id="valor" type="text" inputmode="numeric" placeholder="Ej: $2.500" autocomplete="off"><p class="nota" id="n-valor"></p><p class="ley" id="ley-valor"></p></div>
-        <div class="campo"><label for="estado">ESTADO</label><select id="estado"><option>Habilitado</option><option>Deshabilitado</option></select><p class="ley">Con cantidad 0 el producto queda Deshabilitado automáticamente.</p></div>
+        <div class="campo"><label for="codigo">Producto número</label><input id="codigo" type="text" placeholder="Ej: P-104" autocomplete="off"><p class="nota" id="n-codigo"></p><span class="ley" id="ley-codigo"></span></div>
+        <div class="campo"><label for="nombre">Nombre</label><input id="nombre" type="text" placeholder="Ej: Harina 1kg" autocomplete="off"><p class="nota" id="n-nombre"></p></div>
+        <div class="campo"><label for="cantidad">Cantidad</label><input id="cantidad" type="text" inputmode="numeric" placeholder="Ej: 15" autocomplete="off"><p class="nota" id="n-cantidad"></p></div>
+        <div class="campo"><label for="valor">Valor</label><input id="valor" type="text" inputmode="numeric" placeholder="Ej: $2.500" autocomplete="off"><p class="nota" id="n-valor"></p><span class="ley" id="ley-valor"></span></div>
+        <div class="campo"><label for="estado">Estado</label><select id="estado" data-v="Habilitado"><option>Habilitado</option><option>Deshabilitado</option></select></div>
         <div class="acciones"><button class="btn" id="guardar" type="button">Guardar</button><button class="btn sec" id="volver" type="button">Volver</button><button class="btn peligro" id="borrar" type="button">Borrar</button></div>
       </div>
     </section>
